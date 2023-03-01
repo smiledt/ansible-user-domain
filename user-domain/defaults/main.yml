@@ -1,0 +1,12 @@
+---
+# defaults file for domain_user
+
+domain_user: username
+domain_name: domain.com
+local_path: ~/.local/bin
+
+force_color_prompt: yes
+run_noninteractive: yes
+create_home_dirs: no
+
+domain_user_fqdn: "{{ domain_user }}@{{ domain_name }}"

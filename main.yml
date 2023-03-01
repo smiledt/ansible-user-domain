@@ -1,0 +1,6 @@
+# Preps the domain user account on the host.
+- name: Prep the domain user account.
+  hosts: linux
+  become: true
+  roles:
+    - role: user-domain

@@ -1,0 +1,38 @@
+---
+# tasks file for user-domain
+
+# In my domain-join playbook, I enable home folder creation using Pam authentication, so this should not be necessary.
+# Unfortunately the home folder creation has been hit or miss for me, so I'm adding the option to create them manually.
+- name: Create the home directories
+  file:
+    path: "/home/{{ domain_user_fqdn }}"
+    owner: "{{ domain_user }}"
+    group: "domain users"
+    mode: '0750'
+    state: directory
+  when: create_home_dirs
+
+- name: Set authorized SSH key for user {{ domain_user }}
+  authorized_key:
+    user: "{{ domain_user }}"
+    state: present
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+    - files/*.pub
+
+- name: Template out the .bashrc file for user {{ domain_user }}
+  template:
+    src: bashrc.j2
+    dest: "/home/{{ domain_user_fqdn }}/.bashrc"
+    owner: "{{ domain_user }}"
+    group: "domain users"
+    mode: '644'
+
+- name: Copy over the .bash_profile file for user {{ domain_user }}
+  copy:
+    src: bash_profile
+    dest: "/home/{{ domain_user_fqdn }}/.bash_profile"
+    owner: "{{ domain_user }}"
+    group: "domain users"
+    mode: '644'
+    force: yes
